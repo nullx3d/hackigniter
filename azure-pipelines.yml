@@ -1,0 +1,22 @@
+trigger:
+- master
+
+pool: Default
+
+steps:
+
+- task: FortifySCA@7
+  inputs:
+    applicationType: 'other'
+    fortifyBuildId: 'php'
+    fortifyScanType: 'LocalScan'
+    runFortifyUpload: true
+    fortifyServerName: 'ssc test'
+    fortifyApplicationName: 'hackigniter'
+    fortifyApplicationVersion: '1.0.0'
+
+- script: |
+    if (steps.FortifySCA@7.outputs.highSeverityCount > 0) {
+      Write-Host "Yüksek seviyeli bir güvenlik açığı bulundu. Akış kırılıyor."
+      Exit 1
+    }
