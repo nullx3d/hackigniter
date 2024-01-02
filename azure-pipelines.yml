@@ -15,14 +15,18 @@ steps:
     fortifyApplicationName: 'hackigniter'
     fortifyApplicationVersion: '1'
 
-- task: FPRUtility@2
-  inputs:
-    fprutilityPath: 'C:\Program Files\Fortify\FPRUtility\fprutility.exe'
-    fprutilityProfile: 'My FPRUtility Profile'
-    fprutilityInputPath: '**\\*.fpr'
-
 - script: |
-    if (steps.FPRUtility@2.outputs.highSeverityCount > 0) {
+    # FPRUtility'nin yolunu belirleyin
+    fprutilityPath = "C:\Program Files\Fortify\Fortify_SCA_23.2.0\bin\FPRUtility.bat"
+
+    # FPRUtility'yi çalıştırın
+    fprutilityOutput = Invoke-Expression -Command "$fprutilityPath -profile My FPRUtility Profile -input **\*.fpr"
+
+    # Analiz sonuçlarını işleyin
+    highSeverityCount = $fprutilityOutput.highSeverityCount
+
+    # Kritik seviyede bir güvenlik açığı olup olmadığını kontrol edin
+    if ($highSeverityCount -gt 0) {
       Write-Host "Yüksek seviyeli bir güvenlik açığı bulundu. Akış kırılıyor."
       Exit 1
     }
