@@ -13,7 +13,7 @@ steps:
     runFortifyUpload: true
     fortifyServerName: 'ssc test'
     fortifyApplicationName: 'hackigniter'
-    fortifyApplicationVersion: '1.0.0'
+    fortifyApplicationVersion: '1'
 
 - script: |
     if (steps.FortifySCA@7.outputs.highSeverityCount > 0) {
