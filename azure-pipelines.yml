@@ -15,8 +15,14 @@ steps:
     fortifyApplicationName: 'hackigniter'
     fortifyApplicationVersion: '1'
 
+- task: FPRUtility@2
+  inputs:
+    fprutilityPath: 'C:\Program Files\Fortify\FPRUtility\fprutility.exe'
+    fprutilityProfile: 'My FPRUtility Profile'
+    fprutilityInputPath: '**\\*.fpr'
+
 - script: |
-    if (steps.FortifySCA@7.outputs.highSeverityCount > 0) {
+    if (steps.FPRUtility@2.outputs.highSeverityCount > 0) {
       Write-Host "Yüksek seviyeli bir güvenlik açığı bulundu. Akış kırılıyor."
       Exit 1
     }
