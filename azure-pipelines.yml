@@ -18,6 +18,6 @@ steps:
 
 - powershell: |
     $fprOutput = fprutility -information -search -query "[fortify priority order]:low" -project C:\agent\_work\3\a\sca_artifacts\php.fpr
-    if ($fprOutput -contains "of") {
+    if ($fprOutput -match "of\b") {
       exit 1
     }
