@@ -65,7 +65,7 @@ steps:
       $lines = $content | Where-Object { $_ -like "*friority*" }
       
       if ($lines.Length -ge $x) {
-           Write-Host "proccess killed."
+           Write-Host "Pipeline Broken. Error Status: Exit Code 1"
           Exit 1
          
       }
