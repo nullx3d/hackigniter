@@ -17,8 +17,7 @@ steps:
 
 
 - powershell: |
-    $fprFilePath = "$(Agent.TempDirectory)/$(Build.BuildId).fpr"
-    $fprOutput = fprutility -information -search -query "[fortify priority order]:low" -project $fprFilePath
+    $fprOutput = fprutility -information -search -query "[fortify priority order]:low" -project C:\agent\_work\3\a\sca_artifacts\php.fpr
     if ($fprOutput -contains "of") {
       exit 1
     }
