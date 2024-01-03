@@ -15,18 +15,10 @@ steps:
     fortifyApplicationName: 'hackigniter'
     fortifyApplicationVersion: '1'
 
-- script: |
-    # FPRUtility'nin yolunu belirleyin
-    fprutilityPath = "C:\Program Files\Fortify\Fortify_SCA_23.2.0\bin\FPRUtility.bat"
 
-    # FPRUtility'yi çalıştırın
-    fprutilityOutput = Invoke-Expression -Command "$fprutilityPath -profile My FPRUtility Profile -input **\*.fpr"
-
-    # Analiz sonuçlarını işleyin
-    highSeverityCount = $fprutilityOutput.highSeverityCount
-
-    # Kritik seviyede bir güvenlik açığı olup olmadığını kontrol edin
-    if ($highSeverityCount -gt 0) {
-      Write-Host "Yüksek seviyeli bir güvenlik açığı bulundu. Akış kırılıyor."
-      Exit 1
+- powershell: |
+    $fprFilePath = "$(Agent.TempDirectory)/$(Build.BuildId).fpr"
+    $fprOutput = fprutility -information -search -query "[fortify priority order]:low" -project $fprFilePath
+    if ($fprOutput -contains "of") {
+      exit 1
     }
