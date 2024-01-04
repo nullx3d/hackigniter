@@ -60,8 +60,7 @@ steps:
     targetType: 'inline'
     script: |
       $content = Get-Content -Path "$(OUTPUT_PATH)"
-     
-      
+      $(X)
       $lines = $content | Where-Object { $_ -like "*friority*" }
       
       if ($lines.Length -ge $(X) {
