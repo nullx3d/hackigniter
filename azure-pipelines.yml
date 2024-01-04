@@ -58,8 +58,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      $content = Get-Content -Path "C:\Users\Administrator\Desktop\output.txt"
-      $x = $(X)
+      $content = Get-Content -Path "$(OUTPUT_PATH)"
+      $x = 2
       
       $lines = $content | Where-Object { $_ -like "*friority*" }
       
@@ -68,3 +68,4 @@ steps:
           Exit 1
          
       }
+    
