@@ -37,12 +37,12 @@ steps:
               $project_versions_data = $response.Content | ConvertFrom-Json
       
               # Json data write
-              $file_path = "C:\Users\Administrator\Desktop\test.json"
+              $file_path = "$(JSON_PATH)"
               $project_versions_data | ConvertTo-Json -Depth 4 | Out-File -FilePath $file_path
-              $jsonData = Get-Content "C:\Users\Administrator\Desktop\test.json"
+              $jsonData = Get-Content "$(JSON_PATH)"
               $priorityLines = $jsonData | Where-Object { $_ -like "*friority*" }
-              $txtFile = "C:\Users\Administrator\Desktop\output.txt"
-              $priorityLines | Out-File -FilePath "C:\Users\Administrator\Desktop\output.txt"
+              $txtFile = "$(OUTPUT_PATH)"
+              $priorityLines | Out-File -FilePath "$(OUTPUT_PATH)"
       
       
               Write-Host "Project vulnerability info export succes."
@@ -59,12 +59,12 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      $content = Get-Content -Path "C:\Users\Administrator\Desktop\output.txt"
-      $x = 2
+      $content = Get-Content -Path "$(OUTPUT_PATH)"
+     
       
       $lines = $content | Where-Object { $_ -like "*friority*" }
       
-      if ($lines.Length -ge $x) {
+      if ($lines.Length -ge $(X) {
            Write-Host "Pipeline Broken. Error Status: Exit Code 1"
           Exit 1
          
