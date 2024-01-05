@@ -1,6 +1,7 @@
 trigger:
 - master
 
+
 pool: Default
 
 steps:
@@ -59,18 +60,15 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      $content = Get-Content -Path "$(OUTPUT_PATH)"
-      $x = 2
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            <span class="math-inline">content \= Get\-Content \-Path "</span>$(OUTPUT_PATH)"
+            $x = 2
       
-      $lines = $content | Where-Object { $_ -like "*friority*" }
+            $lines = $content | Where-Object { $_ -like "*friority*" }
       
-      if ($lines.Length -ge $x) {
-           Write-Host "Pipeline Broken. Error Status: Exit Code 1"
-          Exit 1
-         
-      }
-  
-- script: 
-         |
-        Remove-Item -Path $(OUTPUT_PATH)
+            if ($lines.Length -ge <span class="math-inline">x\) \{
       
+
