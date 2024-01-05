@@ -28,23 +28,19 @@ steps:
       }
       
       try {
-          # Api request get
+          
           $response = Invoke-WebRequest -Uri $fortify_ssc_api_url -Method Get -Headers $headers
       
-          # Reponse status
+          
           if ($response.StatusCode -eq 200) {
-              # JSON data parse
+              
               $project_versions_data = $response.Content | ConvertFrom-Json
-      
-              # Json data write
               $file_path = "C:\Users\Administrator\Desktop\test.json"
               $project_versions_data | ConvertTo-Json -Depth 4 | Out-File -FilePath $file_path
               $jsonData = Get-Content "C:\Users\Administrator\Desktop\test.json"
               $priorityLines = $jsonData | Where-Object { $_ -like "*friority*" }
               $txtFile = "C:\Users\Administrator\Desktop\output.txt"
               $priorityLines | Out-File -FilePath "C:\Users\Administrator\Desktop\output.txt"
-      
-      
               Write-Host "Project vulnerability info export succes."
           } else {
               throw "HTTP Error: $($response.StatusCode) $($response.StatusDescription)"
@@ -69,3 +65,4 @@ steps:
           Exit 1
          
       }
+
