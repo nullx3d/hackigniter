@@ -14,44 +14,58 @@ steps:
     fortifyServerName: 'ssc test'
     fortifyApplicationName: 'hackigniter'
     fortifyApplicationVersion: '1'
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      $fortify_ssc_api_url = "$(url)"
+      $token = "FortifyToken $(FortiToken)"
+      
+      $headers = @{
+          "Authorization" = $token
+          "Content-Type" = "application/json"
+          "Accept" = "application/json"
+      }
+      
+      try {
+          # Api request get
+          $response = Invoke-WebRequest -Uri $fortify_ssc_api_url -Method Get -Headers $headers
+      
+          # Reponse status
+          if ($response.StatusCode -eq 200) {
+              # JSON data parse
+              $project_versions_data = $response.Content | ConvertFrom-Json
+      
+              # Json data write
+              $file_path = "C:\Users\Administrator\Desktop\test.json"
+              $project_versions_data | ConvertTo-Json -Depth 4 | Out-File -FilePath $file_path
+              $jsonData = Get-Content "C:\Users\Administrator\Desktop\test.json"
+              $priorityLines = $jsonData | Where-Object { $_ -like "*friority*" }
+              $txtFile = "C:\Users\Administrator\Desktop\output.txt"
+              $priorityLines | Out-File -FilePath "C:\Users\Administrator\Desktop\output.txt"
+      
+      
+              Write-Host "Project vulnerability info export succes."
+          } else {
+              throw "HTTP Error: $($response.StatusCode) $($response.StatusDescription)"
+          }
+      } catch [System.Net.WebException] {
+          Write-Host "HTTP Error: $($_.Exception.Message)"
+      } catch {
+          Write-Host "An error occurred: $($_.Exception.Message)"
+      }
 
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
     script: |
-      - task: PowerShell@2
-        inputs:
-          targetType: 'inline'
-          script: |
-            $fortify_ssc_api_url = "$(url)"
-            $token = "FortifyToken $(FortiToken)"
+      $content = Get-Content -Path "C:\Users\Administrator\Desktop\output.txt"
+      $x = 2
       
-            $headers = @{
-              "Authorization" = $token
-              "Content-Type" = "application/json"
-              "Accept" = "application/json"
-            }
+      $lines = $content | Where-Object { $_ -like "*friority*" }
       
-            try {
-              
-              $response = Invoke-WebRequest -Uri $fortify_ssc_api_url -Method Get -Headers $headers
-      
-              
-              if ($response.StatusCode -eq 200) {
-                
-                $project_versions_data = $response.Content | ConvertFrom-Json
-      
-                
-                $priorityLines = $project_versions_data | Where-Object { $_ -like "*friority*" }
-      
-                
-                if ($priorityLines.Length -ge 2) {
-                  Write-Host "Pipeline Broken. Error Status: Exit Code 1"
-                  Exit 1
-                }
-      
-                
-              }
-            } catch {
-             
-            }
+      if ($lines.Length -ge $x) {
+           Write-Host "Pipeline Broken. Error Status: Exit Code 1"
+          Exit 1
+         
+      }
