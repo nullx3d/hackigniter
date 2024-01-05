@@ -14,58 +14,44 @@ steps:
     fortifyServerName: 'ssc test'
     fortifyApplicationName: 'hackigniter'
     fortifyApplicationVersion: '1'
+
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
     script: |
-      $fortify_ssc_api_url = "$(url)"
-      $token = "FortifyToken $(FortiToken)"
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            $fortify_ssc_api_url = "$(url)"
+            $token = "FortifyToken $(FortiToken)"
       
-      $headers = @{
-          "Authorization" = $token
-          "Content-Type" = "application/json"
-          "Accept" = "application/json"
-      }
+            $headers = @{
+              "Authorization" = $token
+              "Content-Type" = "application/json"
+              "Accept" = "application/json"
+            }
       
-      try {
-          # Api request get
-          $response = Invoke-WebRequest -Uri $fortify_ssc_api_url -Method Get -Headers $headers
+            try {
+              
+              $response = Invoke-WebRequest -Uri $fortify_ssc_api_url -Method Get -Headers $headers
       
-          # Reponse status
-          if ($response.StatusCode -eq 200) {
-              # JSON data parse
-              $project_versions_data = $response.Content | ConvertFrom-Json
+              
+              if ($response.StatusCode -eq 200) {
+                
+                $project_versions_data = $response.Content | ConvertFrom-Json
       
-              # Json data write
-              $file_path = "$(JSON_PATH)"
-              $project_versions_data | ConvertTo-Json -Depth 4 | Out-File -FilePath $file_path
-              $jsonData = Get-Content "$(JSON_PATH)"
-              $priorityLines = $jsonData | Where-Object { $_ -like "*friority*" }
-              $txtFile = "$(OUTPUT_PATH)"
-              $priorityLines | Out-File -FilePath "$(OUTPUT_PATH)"
+                
+                $priorityLines = $project_versions_data | Where-Object { $_ -like "*friority*" }
       
+                
+                if ($priorityLines.Length -ge 2) {
+                  Write-Host "Pipeline Broken. Error Status: Exit Code 1"
+                  Exit 1
+                }
       
-              Write-Host "Project vulnerability info export succes."
-          } else {
-              throw "HTTP Error: $($response.StatusCode) $($response.StatusDescription)"
-          }
-      } catch [System.Net.WebException] {
-          Write-Host "HTTP Error: $($_.Exception.Message)"
-      } catch {
-          Write-Host "An error occurred: $($_.Exception.Message)"
-      }
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: |
-      $content = Get-Content -Path "$(OUTPUT_PATH)"
-      $x = 2
-      
-      $lines = $content | Where-Object { $_ -like "*friority*" }
-      
-      if ($lines.Length -ge $x) {
-           Write-Host "Pipeline Broken. Error Status: Exit Code 1"
-          Exit 1
-         
-      }
-    
+                
+              }
+            } catch {
+             
+            }
