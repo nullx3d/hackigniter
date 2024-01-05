@@ -67,6 +67,5 @@ steps:
       
             if ($lines.Length -ge $x) {
               Write-Host "Pipeline Broken. Error Status: Exit Code 1"
-              rm "$(OUTPUT_PATH)", "$(JSON_PATH)"  # Dosyayı burada silin
               Exit 1
             }
