@@ -64,11 +64,14 @@ steps:
         inputs:
           targetType: 'inline'
           script: |
-            <span class="math-inline">content \= Get\-Content \-Path "</span>$(OUTPUT_PATH)"
+            $content = Get-Content -Path "$(OUTPUT_PATH)"
             $x = 2
       
             $lines = $content | Where-Object { $_ -like "*friority*" }
       
-            if ($lines.Length -ge <span class="math-inline">x\) \{
-      
+            if ($lines.Length -ge $x) {
+              Write-Host "Pipeline Broken. Error Status: Exit Code 1"
+              Remove-Item -Path "$(OUTPUT_PATH)"  # Dosyayı burada silin
+              Exit 1
+            }
 
