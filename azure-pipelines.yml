@@ -18,30 +18,19 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      # Define Fortify token , SSC URL and Version ID
-            $sscFortifyToken = "NGMxN2EwZGItMzBmZS00OTAwLTkwYjgtNDY2YTMwYTlkN2Vm"
-            $sscUrl = "http://192.168.13.76:8081/ssc/api/v1/projectVersions/10001/issues?start=0&limit=200&q=%5Bfortify%20priority%20order%5D%3Acritical&qm=issues&showhidden=false&showremoved=false&showsuppressed=false&showshortfilenames=false
-      "
-            $critical_count=3
-            
-            # Define headers for the HTTP requests
-            $headers = @{
-                'Accept' = 'application/json'
-                'Authorization' = "FortifyToken $sscFortifyToken"
-                'Content-Type' = 'application/json'
-            }
-            
-            
-            # Get Issue Count Function
-            
-                $response = Invoke-RestMethod -Uri "$(URL)" -Method Get -Headers $headers
-                $friority=$response.data.friority
-                $friority_value="Critical"
-                $friority_count= ($friority | Select-String -Pattern $friority_value).Matches.Count
-                if($friority_count -ge 3){
+      $fortify_ssc_api_url = "http://192.168.13.76:8081/ssc/api/v1/projectVersions/10001/issues?start=0&limit=200&q=%5Bfortify%20priority%20order%5D%3Acritical&qm=issues&showhidden=false&showremoved=false&showsuppressed=false&showshortfilenames=false"
+      $token = "FortifyToken NGMxN2EwZGItMzBmZS00OTAwLTkwYjgtNDY2YTMwYTlkN2Vm"
+      
+      $headers = @{
+          "Authorization" = $token
+          "Content-Type" = "application/json"
+          "Accept" = "application/json"
+      }
+          # Api request get
+          $response = Invoke-WebRequest -Uri $fortify_ssc_api_url -Method Get -Headers $headers
+              $project_versions_data = $response.Content | ConvertFrom-Json
+                if($project_versions_data.count -ge 3){
                 Write-Host "Pipeline Broken. Error Status: Exit Code 1"
                 Exit 1
                 }
-                return $friority_count
-            
-            ####
+                return $project_versions_data.count
