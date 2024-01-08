@@ -34,7 +34,7 @@ steps:
             
             # Get Issue Count Function
             
-                $response = Invoke-RestMethod -Uri $(URL) -Method Get -Headers $headers
+                $response = Invoke-RestMethod -Uri "$(URL)" -Method Get -Headers $headers
                 $friority=$response.data.friority
                 $friority_value="Critical"
                 $friority_count= ($friority | Select-String -Pattern $friority_value).Matches.Count
