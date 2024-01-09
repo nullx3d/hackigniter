@@ -29,7 +29,7 @@ steps:
           # Api request get
           $response = Invoke-WebRequest -Uri $fortify_ssc_api_url -Method Get -Headers $headers
               $project_versions_data = $response.Content | ConvertFrom-Json
-                if($project_versions_data.count -ge 3){
+                if($project_versions_data.count -ge 30){
                 Write-Host "Pipeline Broken. Error Status: Exit Code 1"
                 Exit 1
                 }
