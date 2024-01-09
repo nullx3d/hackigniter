@@ -27,7 +27,7 @@ steps:
           "Accept" = "application/json"
       }
           # Api request get
-          $response = Invoke-WebRequest -Uri $fortify_ssc_api_url -Method Get -Headers $headers
+          $response = Invoke-WebRequest -Uri $fortify_ssc_api_url -Method Get -Headers $headers -UseBasicParsing
               $project_versions_data = $response.Content | ConvertFrom-Json
                 if($project_versions_data.count -ge 30){
                 Write-Host "Pipeline Broken. Error Status: Exit Code 1"
